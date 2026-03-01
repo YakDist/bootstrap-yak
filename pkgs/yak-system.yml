@@ -1,0 +1,32 @@
+sources:
+  - name: yak
+    subdir: 'ports'
+    git: 'https://codeberg.org/YakDist/yak.git'
+    branch: main
+    rolling_version: true
+    version: "0.0pl@ROLLING_ID@"
+
+packages:
+  - name: yak
+    architecture: "@OPTION:arch@"
+    from_source: yak
+    revision: 1
+    tools_required:
+      - host-gcc-bootstrap
+      - host-cmake
+    configure:
+      - args:
+          - 'cmake'
+          - '-DCMAKE_TOOLCHAIN_FILE=@SOURCE_ROOT@/support/CMakeToolchain-@OPTION:arch-triple@.txt'
+          - '-DCMAKE_INSTALL_PREFIX=/usr'
+          - '-DCMAKE_BUILD_TYPE=Debug'
+          - '-DCMAKE_COLOR_DIAGNOSTICS=ON'
+          - '-DCMAKE_C_COMPILER_WORKS=1'
+          - '-DCMAKE_CXX_COMPILER_WORKS=1'
+          - '-GNinja'
+          - '@THIS_SOURCE_DIR@'
+    build:
+      - args: ["ninja"]
+      - args: ["ninja", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"

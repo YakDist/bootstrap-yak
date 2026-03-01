@@ -1,0 +1,21 @@
+sources:
+  - name: cmake
+    subdir: ports
+    git: https://gitlab.kitware.com/cmake/cmake.git
+    tag: v4.0.0
+    version: 4.0.0
+
+tools:
+  - name: host-cmake
+    architecture: noarch
+    from_source: cmake
+    configure:
+      - args:
+          - '@THIS_SOURCE_DIR@/bootstrap'
+          - '--prefix=@PREFIX@'
+          - '--parallel=@PARALLELISM@'
+    compile:
+      - args: ['make' , '-j@PARALLELISM@']
+    install:
+      - args: ['make', 'install']
+      - args: ['ln', '-sf', '@SOURCE_ROOT@/support/Yak.cmake', '@PREFIX@/share/cmake-4.0/Modules/Platform/']

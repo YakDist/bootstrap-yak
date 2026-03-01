@@ -1,0 +1,19 @@
+[binaries]
+c = 'x86_64-yak-gcc'
+cpp = 'x86_64-yak-g++'
+ar = 'x86_64-yak-ar'
+nm = 'x86_64-yak-nm'
+objcopy = 'x86_64-yak-objcopy'
+ranlib = 'x86_64-yak-ranlib'
+strip = 'x86_64-yak-strip'
+pkg-config = 'pkgconf'
+llvm-config = '/base_dir/support/llvm-config'
+
+[host_machine]
+system = 'yak'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+[built-in options]
+libdir = 'lib'

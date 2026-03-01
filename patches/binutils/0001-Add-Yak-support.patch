@@ -1,0 +1,130 @@
+diff --git binutils-clean/bfd/config.bfd binutils-workdir/bfd/config.bfd
+index 4e5a838..7fefe59 100644
+--- binutils-clean/bfd/config.bfd
++++ binutils-workdir/bfd/config.bfd
+@@ -660,6 +660,11 @@ case "${targ}" in
+     targ_selvecs="iamcu_elf32_vec i386_pei_vec"
+     targ64_selvecs="x86_64_elf64_vec x86_64_elf32_vec x86_64_pe_vec x86_64_pei_vec"
+     ;;
++  i[3-7]86-*-yak*)
++    targ_defvec=i386_elf32_vec
++    targ_selvecs=
++    targ64_selvces=x86_64_elf64_vec
++    ;;
+   i[3-7]86-*-redox*)
+     targ_defvec=i386_elf32_vec
+     targ_selvecs=
+@@ -715,6 +720,11 @@ case "${targ}" in
+     targ_selvecs="i386_elf32_vec iamcu_elf32_vec x86_64_elf32_vec i386_pei_vec x86_64_pe_vec x86_64_pei_vec"
+     want64=true
+     ;;
++  x86_64-*-yak-*)
++    targ_defvec=x86_64_elf64_vec
++    targ_selvecs="i386_elf32_vec"
++    want64=true
++    ;;
+   x86_64-*-mingw* | x86_64-*-pe | x86_64-*-pep | x86_64-*-cygwin)
+     targ_defvec=x86_64_pe_vec
+     targ_selvecs="x86_64_pe_vec x86_64_pei_vec x86_64_pe_big_vec x86_64_elf64_vec i386_pe_vec i386_pei_vec i386_elf32_vec iamcu_elf32_vec pdb_vec"
+diff --git binutils-clean/config.guess binutils-workdir/config.guess
+index 48a6846..6429d7d 100755
+--- binutils-clean/config.guess
++++ binutils-workdir/config.guess
+@@ -980,6 +980,12 @@ EOF
+     *:[Mm]anagarm:*:*)
+ 	GUESS="$UNAME_MACHINE-unknown-managarm-mlibc"
+ 	;;
++    x86_64:[Yy]ak:*:*|i?86:[Yy]ak:*:*)
++	GUESS="$UNAME_MACHINE-pc-yak-mlibc"
++	;;
++    *:[Yy]ak:*:*)
++	GUESS="$UNAME_MACHINE-unknown-yak-mlibc"
++	;;
+     *:Minix:*:*)
+ 	GUESS=$UNAME_MACHINE-unknown-minix
+ 	;;
+diff --git binutils-clean/config.sub binutils-workdir/config.sub
+index 4aaae46..06ce407 100755
+--- binutils-clean/config.sub
++++ binutils-workdir/config.sub
+@@ -147,6 +147,7 @@ case $1 in
+ 			| kopensolaris*-gnu* \
+ 			| linux-* \
+ 			| managarm-* \
++			| yak-* \
+ 			| netbsd*-eabi* \
+ 			| netbsd*-gnu* \
+ 			| nto-qnx* \
+@@ -1530,6 +1531,11 @@ EOF
+ 		kernel=managarm
+ 		os=`echo "$basic_os" | sed -e 's|managarm|mlibc|'`
+ 		;;
++	yak*)
++		kernel=yak
++		os=`echo "$basic_os" |sed -e 's|yak|mlibc|'`
++		echo "kernel: Yak" >&2
++		;;
+ 	*)
+ 		kernel=
+ 		os=$basic_os
+@@ -2216,6 +2222,8 @@ case $kernel-$os-$obj in
+ 		;;
+ 	managarm-mlibc*- | managarm-kernel*- )
+ 		;;
++	yak-mlibc*- | yak-kernel*- )
++		;;
+ 	windows*-msvc*-)
+ 		;;
+ 	-dietlibc*- | -llvm*- | -mlibc*- | -musl*- | -newlib*- | -relibc*- \
+diff --git binutils-clean/configure binutils-workdir/configure
+index bbfb597..7eee314 100755
+--- binutils-clean/configure
++++ binutils-workdir/configure
+@@ -3083,7 +3083,7 @@ case "${ENABLE_GOLD}" in
+       *-*-elf* | *-*-sysv4* | *-*-unixware* | *-*-eabi* | hppa*64*-*-hpux* \
+       | *-*-linux* | *-*-gnu* | frv-*-uclinux* | *-*-irix5* | *-*-irix6* \
+       | *-*-netbsd* | *-*-openbsd* | *-*-freebsd* | *-*-dragonfly* \
+-      | *-*-solaris2* | *-*-nto* | *-*-nacl* | *-*-haiku*)
++      | *-*-solaris2* | *-*-nto* | *-*-nacl* | *-*-haiku* | *-*-mlibc*)
+         case "${target}" in
+           *-*-linux*aout* | *-*-linux*oldld*)
+             ;;
+diff --git binutils-clean/gas/configure.tgt binutils-workdir/gas/configure.tgt
+index 7c81bff..0285a1c 100644
+--- binutils-clean/gas/configure.tgt
++++ binutils-workdir/gas/configure.tgt
+@@ -229,6 +229,7 @@ case ${generic_target} in
+   i386-*-beos*)				fmt=elf ;;
+   i386-*-elfiamcu)			fmt=elf arch=iamcu ;;
+   i386-*-elf*)				fmt=elf ;;
++  i386-*-yak*)				fmt=elf ;;
+   i386-*-fuchsia*)			fmt=elf ;;
+   i386-*-haiku*)			fmt=elf em=haiku ;;
+   i386-*-genode*)			fmt=elf ;;
+diff --git binutils-clean/ld/configure.tgt binutils-workdir/ld/configure.tgt
+index ea01ccf..f1d889e 100644
+--- binutils-clean/ld/configure.tgt
++++ binutils-workdir/ld/configure.tgt
+@@ -384,6 +384,10 @@ i[3-7]86-*-linux-*)	targ_emul=elf_i386
+ i[3-7]86-*-redox*)	targ_emul=elf_i386
+ 			targ_extra_emuls=elf_x86_64
+ 			;;
++i[3-7]86-*-yak*)	targ_emul=elf_i386
++			targ64_extra_emuls="elf_x86_64 elf32_x86_64"
++			targ64_extra_libpath=$targ64_extra_emuls
++			;;
+ i[3-7]86-*-solaris2*)	targ_emul=elf_i386_sol2
+ 			targ_extra_emuls="elf_i386_ldso elf_i386 elf_iamcu elf_x86_64_sol2 elf_x86_64"
+ 			targ_extra_libpath=$targ_extra_emuls
+@@ -1016,6 +1020,11 @@ x86_64-*-linux-*)	targ_emul=elf_x86_64
+ 			targ_extra_libpath="elf_i386 elf32_x86_64"
+ 			tdir_elf_i386=`echo ${targ_alias} | sed -e 's/x86_64/i386/'`
+ 			;;
++x86_64-*-yak*)
++			targ_emul=elf_x86_64
++			targ_extra_emuls="elf32_x86_64 elf_i386"
++			targ_extra_libpath="elf_i386 elf32_x86_64"
++			;;
+ x86_64-*-redox*)	targ_emul=elf_x86_64
+ 			targ_extra_emuls=elf_i386
+ 			;;

@@ -1,0 +1,111 @@
+sources:
+  - name: mlibc
+    subdir: 'ports'
+    git: 'https://github.com/lretq/mlibc.git'
+    branch: master
+    rolling_version: true
+    version: "0.0pl@ROLLING_ID@"
+  - name: libsmarter
+    subdir: 'ports'
+    git: 'https://github.com/managarm/libsmarter.git'
+    branch: 'master'
+    rolling_version: true
+    version: '0.0pl@ROLLING_ID@'
+
+packages:
+  - name: libsmarter
+    architecture: '@OPTION:arch@'
+    from_source: libsmarter
+    revision: 1
+    configure:
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/include']
+      - args:
+        - 'meson'
+        - 'setup'
+        - '--prefix=/usr'
+        # install to separate libdir and a separate includedir (instdead of /usr/include)
+        - '--includedir=share/libsmarter/include'
+        - '--libdir=lib/@OPTION:arch-triple@/libsmarter'
+        - '@THIS_SOURCE_DIR@'
+    build:
+      - args: ['ninja', 'install']
+        environ:
+          DESTDIR: '@THIS_COLLECT_DIR@'
+      # symlink the pkgconfig file to the standard location
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig']
+      - args: ['ln', '-srf', '@THIS_COLLECT_DIR@/usr/lib/@OPTION:arch-triple@/libsmarter/pkgconfig/libsmarter.pc',
+              '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/libsmarter.pc']
+  - name: frigg
+    architecture: "@OPTION:arch@"
+    source:
+      rolling_version: true
+      version: '0.0pl@ROLLING_ID@'
+      subdir: 'ports'
+      git: 'https://github.com/managarm/frigg.git'
+      branch: master
+    revision: 1
+    configure:
+      - args:
+          - 'meson'
+          - 'setup'
+          - '--prefix=/usr'
+          - '--libdir=lib'
+          - '--includedir=share/frigg/include'
+          - '--buildtype=debugoptimized'
+          - '-Dbuild_tests=disabled'
+          - '@THIS_SOURCE_DIR@'
+    build:
+      - args: ["ninja"]
+      - args: ["ninja", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"
+        quiet: true
+  - name: mlibc-headers
+    architecture: "@OPTION:arch@"
+    from_source: mlibc
+    revision: 1
+    configure:
+      - args:
+          - "meson"
+          - "setup"
+          - "--cross-file"
+          - "@SOURCE_ROOT@/support/meson-@OPTION:arch-triple@.cross-file"
+          - "--prefix=/usr"
+          - "-Dheaders_only=true"
+          - "@THIS_SOURCE_DIR@"
+    build:
+      - args: ["ninja"]
+      - args: ["ninja", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"
+  - name: mlibc
+    architecture: "@OPTION:arch@"
+    from_source: mlibc
+    revision: 1
+    tools_required:
+      - host-gcc-bootstrap
+      - host-pkgconf
+    pkgs_required:
+      - mlibc-headers
+      - frigg
+      - libsmarter
+    configure:
+      - args:
+          - "meson"
+          - "setup"
+          - "--cross-file"
+          - "@SOURCE_ROOT@/support/meson-@OPTION:arch-triple@.cross-file"
+          - "--prefix=/usr"
+          - "--libdir=lib"
+          - "-Dbuildtype=debugoptimized"
+          - "-Dno_headers=true"
+          - "-Ddefault_library=both"
+          - "--wrap-mode=nofallback"
+          - "@THIS_SOURCE_DIR@"
+        environ:
+          CXXFLAGS: "-Wno-unused-local-typedefs"
+    build:
+      - args: ["ninja"]
+      - args: ["ninja", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"

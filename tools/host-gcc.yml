@@ -1,0 +1,129 @@
+sources:
+  - name: gcc
+    subdir: 'ports'
+    git: 'https://gcc.gnu.org/git/gcc.git'
+    tag: 'releases/gcc-15.2.0'
+    version: '15.2.0'
+    sources_required: ['gnuconfig']
+    regenerate:
+      - args: ['cp', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', '@THIS_SOURCE_DIR@/.']
+      - args: ['cp', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', '@THIS_SOURCE_DIR@/.']
+    tools_required:
+      - host-autoconf-v2.69
+      - host-automake-v1.15
+      - host-libtool
+    regenerate:
+      - args: ["@SOURCE_ROOT@/scripts/autoreconf.sh", "-I@THIS_SOURCE_DIR@/config"]
+
+tools:
+  - name: host-gcc-bootstrap
+    architecture: '@OPTION:arch@'
+    from_source: gcc
+    tools_required:
+      - tool: cross-binutils
+        recursive: true
+    revision: 1
+    configure:
+      - args:
+          - '@THIS_SOURCE_DIR@/configure'
+          - '--with-pkgversion=yak'
+          - '--with-bugurl=https://codeberg.org/YakDist/bootstrap-yak/issues/'
+          - '--prefix=@PREFIX@'
+          - '--target=@OPTION:arch-triple@'
+          - '--with-sysroot=@SYSROOT_DIR@'
+          - '--enable-threads=posix'
+          - '--enable-initfini-array'
+          - '--without-headers'
+          - '--without-newlib'
+          - '--disable-shared'
+          - '--enable-languages=c,c++,lto'
+          - '--disable-hosted-libstdcxx'
+          - '--disable-libquadmath'
+          - '--disable-libssp'
+          - '--disable-libsanitizer'
+          - '--disable-fixincludes'
+          - '--disable-wchar_t'
+          - 'CXFLAGS=-O2'
+          - 'CXXFLAGS=-O2'
+    stages:
+      - name: early-compiler
+        pkgs_required:
+          - mlibc-headers
+        compile:
+          - args: ['make', '-j@PARALLELISM@', 'all-gcc']
+        install:
+          - args: ['make', '-j@PARALLELISM@', 'install-gcc']
+          # GCC does *not* look for target-prefixed LD/AS.
+          # Instead, it searches a list of prefix directories. Link AS/LD to make it happy.
+          - args: ['mkdir', '-p', '@PREFIX@/@OPTION:arch-triple@-kernel/bin']
+          - args: ['ln', '-sf', '../../../cross-binutils/@OPTION:arch-triple@/bin/as', '@PREFIX@/@OPTION:arch-triple@-kernel/bin/as']
+          - args: ['ln', '-sf', '../../../cross-binutils/@OPTION:arch-triple@/bin/ld', '@PREFIX@/@OPTION:arch-triple@-kernel/bin/ld']
+      - name: early-libgcc
+        tools_required:
+          - tool: host-gcc-bootstrap
+            stage_dependencies: [early-compiler]
+        compile:
+          - args: ['make', '-j@PARALLELISM@', 'all-target-libgcc']
+        install:
+          - args: ['make', '-j@PARALLELISM@', 'install-target-libgcc']
+      - name: early-libstdc++
+        tools_required:
+          - tool: host-gcc-bootstrap
+            stage_dependencies: [early-compiler, early-libgcc]
+        compile:
+          - args: ["make", "-j@PARALLELISM@", "all-target-libstdc++-v3"]
+        install:
+          - args: ["make", "-j@PARALLELISM@", "install-target-libstdc++-v3"]
+  - name: host-gcc
+    architecture: "@OPTION:arch@"
+    from_source: gcc
+    revision: 1
+    tools_required:
+      - tool: cross-binutils
+        recursive: true
+      - host-gcc-bootstrap
+    configure:
+      - args:
+          - "@THIS_SOURCE_DIR@/configure"
+          - "--target=@OPTION:arch-triple@"
+          - "--prefix=@PREFIX@"
+          - "--with-sysroot=@SYSROOT_DIR@"
+          - "--enable-languages=c,c++,lto"
+          - "--disable-multilib"
+          - "--enable-initfini-array"
+          - "--enable-threads=posix"
+          - "--enable-shared"
+          - "--enable-host-shared"
+    stages:
+      - name: compiler
+        tools_required:
+          - host-gcc-bootstrap
+        compile:
+          - args: ["make", "-j@PARALLELISM@", "all-gcc"]
+        install:
+          - args: ["make", "-j@PARALLELISM@", "install-gcc"]
+            # GCC does *not* look for target-prefixed LD/AS.
+            # Instead, it searches a list of prefix directories. Link AS/LD to make it happy.
+          - args: ["mkdir", "-p", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin"]
+          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:triple@/bin/as", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin/as"]
+          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:triple@/bin/ld", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin/ld"]
+      - name: libgcc
+        tools_required:
+          - tool: host-gcc
+            stage_dependencies: [compiler]
+        pkgs_required:
+          - mlibc
+        compile:
+          - args: ["make", "-j@PARALLELISM@", "all-target-libgcc"]
+        install:
+          - args: ["make", "-j@PARALLELISM@", "install-target-libgcc"]
+      - name: libstdc++
+        tools_required:
+          - tool: host-gcc
+            stage_dependencies: [compiler, libgcc]
+        pkgs_required:
+          - mlibc
+        compile:
+          - args: ["make", "-j@PARALLELISM@", "all-target-libstdc++-v3"]
+        install:
+          - args: ["make", "-j@PARALLELISM@", "install-target-libstdc++-v3"]

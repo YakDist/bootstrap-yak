@@ -1,0 +1,62 @@
+From ab598885c440c455f390c75b1ece897e2c5c143d Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vinsch32@icloud.com>
+Date: Sat, 28 Feb 2026 15:38:03 +0100
+Subject: Add support for Yak
+
+---
+ config.guess | 6 ++++++
+ config.sub   | 7 +++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/config.guess b/config.guess
+index a9d01fd..d475d82 100755
+--- a/config.guess
++++ b/config.guess
+@@ -980,6 +980,12 @@ EOF
+     *:[Mm]anagarm:*:*)
+ 	GUESS="$UNAME_MACHINE-unknown-managarm-mlibc"
+ 	;;
++    x86_64:[Yy]ak:*:*|i?86:[Yy]ak:*:*)
++	GUESS="$UNAME_MACHINE-pc-yak-mlibc"
++	;;
++    *:[Yy]ak:*:*)
++	GUESS="$UNAME_MACHINE-unknown-yak-mlibc"
++	;;
+     *:Minix:*:*)
+ 	GUESS=$UNAME_MACHINE-unknown-minix
+ 	;;
+diff --git a/config.sub b/config.sub
+index 3d35cde..8c00d8e 100755
+--- a/config.sub
++++ b/config.sub
+@@ -148,6 +148,7 @@ case $1 in
+ 			| ironclad-* \
+ 			| linux-* \
+ 			| managarm-* \
++			| yak-* \
+ 			| netbsd*-eabi* \
+ 			| netbsd*-gnu* \
+ 			| nto-qnx* \
+@@ -1535,6 +1536,10 @@ EOF
+ 		kernel=managarm
+ 		os=`echo "$basic_os" | sed -e 's|managarm|mlibc|'`
+ 		;;
++	yak*)
++		kernel=yak
++		os=`echo "$basic_os" | sed -e 's|yak|mlibc|'`
++		;;
+ 	*)
+ 		kernel=
+ 		os=$basic_os
+@@ -2224,6 +2229,8 @@ case $kernel-$os-$obj in
+ 		;;
+ 	managarm-mlibc*- | managarm-kernel*- )
+ 		;;
++	yak-mlibc*- | yak-kernel*- )
++		;;
+ 	windows*-msvc*-)
+ 		;;
+ 	-dietlibc*- | -llvm*- | -mlibc*- | -musl*- | -newlib*- | -relibc*- \
+-- 
+2.52.0
+

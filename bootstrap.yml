@@ -1,0 +1,27 @@
+imports:
+  - file: tools/host-autoconf.yml
+  - file: tools/host-binutils.yml
+  - file: tools/host-gcc.yml
+  - file: tools/host-pkgconf.yml
+  - file: tools/host-cmake.yml
+  - file: pkgs/dev-libs.yml
+  - file: pkgs/yak-system.yml
+
+general:
+  patch_author: Yak
+  patch_email: mail@yak-os.org
+  everything_by_default: false 
+  mandate_hashes_for_archives: true
+  enable_network_isolation: true
+
+repositories:
+  tool_archives:
+    x86_64: 'http://build.yak-os.org/repos/tools/x86_64/latest/'
+  xbps:
+    x86_64: 'http://build.yak-os.org/repos/packages/x86_64/latest/'
+
+declare_options:
+- name: arch
+  default: x86_64
+- name: arch-triple
+  default: x86_64-yak
