@@ -1,0 +1,45 @@
+sources:
+  - name: llvm
+    subdir: 'ports'
+    git: 'https://github.com/llvm/llvm-project'
+    tag: 'llvmorg-22.1.0'
+    version: '22.1.0'
+
+tools:
+  - name: host-llvm
+    architecture: "@OPTION:arch@"
+    exports_shared_libs: true
+    from_source: llvm
+    sources_required:
+      - binutils
+    tools_required:
+      - host-cmake
+    revision: 1
+    configure:
+      - args:
+        - 'cmake'
+        - '-GNinja'
+        - '-DCMAKE_INSTALL_PREFIX=@PREFIX@'
+        - '-DCMAKE_C_COMPILER=gcc'
+        - '-DCMAKE_CXX_COMPILER=g++'
+
+        # LLVM configuration options.
+        # We really have to build LLVM in Release mode.
+        # Building it in debug mode produces tens of GiB of debugging info.
+        - '-DCMAKE_BUILD_TYPE=Release'
+        - '-DLLVM_LINK_LLVM_DYLIB=ON'
+        - '-DLLVM_TARGETS_TO_BUILD=X86;AArch64;RISCV;LoongArch'
+        - '-DLLVM_ENABLE_PROJECTS=clang;clang-tools-extra;lld'
+
+        # clang configuration options.
+        - '-DDEFAULT_SYSROOT=@SYSROOT_DIR@'
+        - '-DENABLE_LINKER_BUILD_ID=ON'
+
+        # Gold linker configuration options.
+        - '-DLLVM_BINUTILS_INCDIR=@SOURCE_ROOT@/ports/binutils/include'
+
+        - '@THIS_SOURCE_DIR@/llvm'
+    compile:
+      - args: ['ninja']
+    install:
+      - args: ['ninja', 'install']
