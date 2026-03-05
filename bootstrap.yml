@@ -5,6 +5,7 @@ imports:
   - file: tools/host-pkgconf.yml
   - file: tools/host-cmake.yml
   - file: tools/host-llvm.yml
+  - file: tools/host-limine.yml
   - file: pkgs/dev-libs.yml
   - file: pkgs/yak-system.yml
 

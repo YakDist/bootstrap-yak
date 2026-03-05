@@ -1,0 +1,23 @@
+sources:
+  - name: limine
+    subdir: 'ports'
+    url: 'https://codeberg.org/Limine/Limine/releases/download/v10.5.0/limine-10.5.0.tar.xz'
+    format: 'tar.xz'
+    checksum: blake2b:897a70afbf2fa81beaf49b9079a8932f1863b61c983abcc31e0e6ef2d2a7b3d75948c294ec440217981553e845e2b7d22aa896ecd1335db6d6820313bec1cc8c
+    version: 10.5.0
+    extract_path: 'limine-10.5.0'
+
+tools:
+  - name: host-limine
+    architecture: noarch
+    from_source: limine
+    revision: 1
+    tools_required:
+      - host-llvm
+    configure:
+      - args: ['@THIS_SOURCE_DIR@/configure', '--prefix=@PREFIX@', '--enable-all', '--disable-uefi-loongarch64', 'LDFLAGS=-static']
+    compile:
+      - args: ['make', '-j@PARALLELISM@']
+    install:
+      - args: ['mkdir', '-p', '@PREFIX@/share/limine']
+      - args: ['cp', '-rv', 'bin/.', '@PREFIX@/share/limine/']
