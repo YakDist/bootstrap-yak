@@ -1,0 +1,24 @@
+From a1d23563b7a5f0ef478f77edbb30d72cca9d9b27 Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vincent.schweiger@icloud.com>
+Date: Sat, 7 Mar 2026 12:48:14 +0100
+Subject: [PATCH] change PREFIX to /usr
+
+---
+ GNUmakefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/GNUmakefile b/GNUmakefile
+index 966033d..aa95d59 100644
+--- a/GNUmakefile
++++ b/GNUmakefile
+@@ -1,6 +1,6 @@
+ .SUFFIXES:
+ 
+-PREFIX := /usr/local
++PREFIX := /usr
+ 
+ .PHONY: all
+ all:
+-- 
+2.53.0
+

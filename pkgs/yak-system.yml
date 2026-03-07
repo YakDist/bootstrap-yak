@@ -5,15 +5,51 @@ sources:
     branch: main
     rolling_version: true
     version: "0.0pl@ROLLING_ID@"
+  - name: freestnd-c-hdrs
+    subdir: 'ports'
+    git: 'https://codeberg.org/OSDev/freestnd-c-hdrs.git'
+    branch: trunk
+    rolling_version: true
+    version: "0.0pl@ROLLING_ID@"
+  - name: freestnd-cxx-hdrs
+    subdir: 'ports'
+    git: 'https://codeberg.org/OSDev/freestnd-cxx-hdrs.git'
+    branch: trunk
+    rolling_version: true
+    version: "0.0pl@ROLLING_ID@"
 
 packages:
+  - name: freestnd-c-hdrs
+    architecture: "@OPTION:arch@"
+    from_source: freestnd-c-hdrs
+    revision: 1
+    build:
+      - args: ["make", "-C", "@THIS_SOURCE_DIR@", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"
+      - args: ['ln', '-srf', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-c-hdrs-@OPTION:arch@.pc', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-c-hdrs.pc']
+  - name: freestnd-cxx-hdrs
+    architecture: "noarch"
+    from_source: freestnd-cxx-hdrs
+    revision: 1
+    build:
+      - args: ["make", "-C", "@THIS_SOURCE_DIR@", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"
+      - args: ['ln', '-srf', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-cxx-hdrs-@OPTION:arch@.pc', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-cxx-hdrs.pc']
+
   - name: yak
     architecture: "@OPTION:arch@"
     from_source: yak
     revision: 1
     tools_required:
       - host-gcc-bootstrap
+      - host-pkgconf
       - host-cmake
+    pkgs_required:
+      - freestnd-c-hdrs
+      - freestnd-cxx-hdrs
+      - frigg
     configure:
       - args:
           - 'cmake'
