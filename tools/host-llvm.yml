@@ -38,6 +38,13 @@ tools:
         # Gold linker configuration options.
         - '-DLLVM_BINUTILS_INCDIR=@SOURCE_ROOT@/ports/binutils/include'
 
+        # Disable tests/extra stuff
+        - "-DLLVM_INCLUDE_TESTS=OFF"
+        - "-DCLANG_INCLUDE_TESTS=OFF"
+        - "-DLLVM_INCLUDE_BENCHMARKS=OFF"
+        - "-DLLVM_INCLUDE_DOCS=OFF"
+        - "-DLLVM_INCLUDE_EXAMPLES=OFF"
+
         - '@THIS_SOURCE_DIR@/llvm'
     compile:
       - args: ['ninja']

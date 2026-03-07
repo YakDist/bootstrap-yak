@@ -1,0 +1,23 @@
+tasks:
+  - name: make-iso
+    containerless: true
+    workdir: "@BUILD_ROOT@"
+    args:
+      - "@SOURCE_ROOT@/scripts/make-iso.sh"
+      - "@BUILD_ROOT@"
+      - "@OPTION:arch@"
+      - "yak-@OPTION:arch@.iso"
+  - name: qemu
+    tasks_required:
+      - task: make-iso
+        order_only: true
+    tools_required:
+      - host-ovmf-bin
+    args:
+      - "@SOURCE_ROOT@/scripts/qemu.sh"
+      - '-sk'
+      - "@OPTION:arch@"
+      - "@BUILD_ROOT@/tools/host-ovmf-bin/ovmf-code-@OPTION:arch@.fd"
+      - "@BUILD_ROOT@/yak-@OPTION:arch@.iso"
+    workdir: "@BUILD_ROOT@"
+    containerless: true

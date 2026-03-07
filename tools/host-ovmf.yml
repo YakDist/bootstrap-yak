@@ -1,0 +1,15 @@
+sources:
+- name: edk2-ovmf-bin
+  subdir: "ports"
+  url: https://github.com/osdev0/edk2-ovmf-nightly/releases/download/nightly-20260306T015751Z/edk2-ovmf.tar.xz
+  checksum: blake2b:2ce89d28dabee107eb1340aa2aa45b001842b6459192a25424e398981b789fc75989991e0ee0eb1644eb965dc12fd495feee3b2d5e3b9ecd0bf86c7ba83c3f5f
+  format: tar.xz
+  extract_path: edk2-ovmf
+
+tools:
+- name: host-ovmf-bin
+  containerless: true
+  architecture: "@OPTION:arch@"
+  from_source: edk2-ovmf-bin
+  install:
+  - args: [ "cp", "@SOURCE_ROOT@/ports/edk2-ovmf-bin/ovmf-code-@OPTION:arch@.fd", "@PREFIX@/" ]
