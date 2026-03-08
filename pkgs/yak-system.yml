@@ -43,7 +43,7 @@ packages:
     from_source: yak
     revision: 1
     tools_required:
-      - host-gcc-bootstrap
+      - host-llvm
       - host-pkgconf
       - host-cmake
     pkgs_required:
@@ -53,7 +53,7 @@ packages:
     configure:
       - args:
           - 'cmake'
-          - '-DCMAKE_TOOLCHAIN_FILE=@SOURCE_ROOT@/support/CMakeToolchain-@OPTION:arch-triple@.txt'
+          - '-DCMAKE_TOOLCHAIN_FILE=@SOURCE_ROOT@/support/CMakeToolchain-@OPTION:arch-triple@-clang.txt'
           - '-DCMAKE_INSTALL_PREFIX=/usr'
           - '-DCMAKE_BUILD_TYPE=Debug'
           - '-DCMAKE_COLOR_DIAGNOSTICS=ON'
