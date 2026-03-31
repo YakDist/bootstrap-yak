@@ -53,12 +53,11 @@ packages:
     configure:
       - args:
           - 'cmake'
-          - '-DCMAKE_TOOLCHAIN_FILE=@SOURCE_ROOT@/support/CMakeToolchain-@OPTION:arch-triple@-clang.txt'
+          - '-DYAK_ARCH=@OPTION:arch@'
+          - '-DYAK_TOOLCHAIN=clang'
           - '-DCMAKE_INSTALL_PREFIX=/usr'
-          - '-DCMAKE_BUILD_TYPE=Debug'
+          - '-DCMAKE_BUILD_TYPE=None'
           - '-DCMAKE_COLOR_DIAGNOSTICS=ON'
-          - '-DCMAKE_C_COMPILER_WORKS=1'
-          - '-DCMAKE_CXX_COMPILER_WORKS=1'
           - '-GNinja'
           - '@THIS_SOURCE_DIR@'
     build:

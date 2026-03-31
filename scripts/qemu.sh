@@ -13,10 +13,12 @@ OVMF_FILE=""
 QEMU_ARGS="${QEMU_OPTARGS:-}"
 ENABLE_KVM=0
 DEBUG=0
-PRINT_COMMAND=0
+
+PRINT_COMMAND="${PRINT_COMMAND:-0}"
 
 QEMU_MEM="${QEMU_MEM:-512M}"
 QEMU_CORES="${QEMU_CORES:-2}"
+QEMU_NUMA="${QEMU_NUMA:-1}"
 
 usage() {
 cat <<EOF
@@ -106,8 +108,34 @@ if [[ "${QEMU_NO_UEFI:-0}" -ne 1 ]]; then
 fi
 
 QEMU_ARGS+=" -cdrom ${ISO}"
-QEMU_ARGS+=" -smp ${QEMU_CORES}"
-QEMU_ARGS+=" -m ${QEMU_MEM}"
+if [[ "${QEMU_NUMA}" -eq 1 ]]; then
+    QEMU_ARGS+=" -smp ${QEMU_CORES}"
+    QEMU_ARGS+=" -m ${QEMU_MEM}"
+else
+    # Strip trailing G/M suffix, divide, re-attach suffix
+    mem_unit="${QEMU_MEM//[0-9]/}"
+    mem_value="${QEMU_MEM//[^0-9]/}"
+    mem_per_node=$(( mem_value / QEMU_NUMA ))
+    cpus_per_node=$(( QEMU_CORES / QEMU_NUMA ))
+
+    QEMU_ARGS+=" -smp cpus=${QEMU_CORES}"
+    QEMU_ARGS+=" -m ${QEMU_MEM}"
+
+    for (( i=0; i<QEMU_NUMA; i++ )); do
+        cpu_start=$(( i * cpus_per_node ))
+        cpu_end=$(( cpu_start + cpus_per_node - 1 ))
+
+        QEMU_ARGS+=" -object memory-backend-ram,size=${mem_per_node}${mem_unit},id=m${i}"
+        QEMU_ARGS+=" -numa node,memdev=m${i},cpus=${cpu_start}-${cpu_end},nodeid=${i}"
+    done
+
+    # Add inter-node distances
+    for (( i=0; i<QEMU_NUMA; i++ )); do
+        for (( j=i+1; j<QEMU_NUMA; j++ )); do
+            QEMU_ARGS+=" -numa dist,src=${i},dst=${j},val=20"
+        done
+    done
+fi
 QEMU_ARGS+=" -s -no-shutdown -no-reboot"
 
 if [[ "$PRINT_COMMAND" -eq 1 ]]; then
