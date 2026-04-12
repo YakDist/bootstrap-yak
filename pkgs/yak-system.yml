@@ -65,3 +65,27 @@ packages:
       - args: ["ninja", "install"]
         environ:
           DESTDIR: "@THIS_COLLECT_DIR@"
+
+  - name: yak-init
+    architecture: "@OPTION:arch@"
+    revision: 1
+    source:
+      subdir: .
+    tools_required:
+      - host-cmake
+      - host-gcc-bootstrap
+    pkgs_required:
+      - mlibc
+    configure:
+      - args:
+          - 'cmake'
+          - '-DCMAKE_INSTALL_PREFIX=/usr'
+          - '-DCMAKE_TOOLCHAIN_FILE=@SOURCE_ROOT@/support/CMakeToolchain-@OPTION:arch-triple@.txt'
+          - '-DCMAKE_COLOR_DIAGNOSTICS=ON'
+          - '-GNinja'
+          - '@THIS_SOURCE_DIR@'
+    build:
+      - args: ["ninja"]
+      - args: ["ninja", "install"]
+        environ:
+          DESTDIR: "@THIS_COLLECT_DIR@"

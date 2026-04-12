@@ -1,12 +1,24 @@
 tasks:
+  - name: update-initrd
+    containerless: true
+    workdir: "@BUILD_ROOT@"
+    args:
+      - '@SOURCE_ROOT@/scripts/make-initrd.sh'
+      - '@SYSROOT_DIR@'
+      - '@BUILD_ROOT@/initrd.tar'
+
   - name: make-iso
     containerless: true
     workdir: "@BUILD_ROOT@"
+    tasks_required:
+      - task: update-initrd
+        order_only: true
     args:
       - "@SOURCE_ROOT@/scripts/make-iso.sh"
       - "@BUILD_ROOT@"
       - "@OPTION:arch@"
       - "yak-@OPTION:arch@.iso"
+
   - name: qemu
     tasks_required:
       - task: make-iso

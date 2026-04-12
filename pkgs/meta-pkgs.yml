@@ -1,0 +1,26 @@
+packages:
+  - name: base
+    architecture: noarch
+    revision: 1
+    configure: []
+    build: []
+    source:
+      subdir: meta-sources
+      version: '1.0'
+    pkgs_required:
+      - mlibc
+      - core-files
+      - tzdata
+      - yak
+
+  - name: minimal
+    architecture: noarch
+    revision: 1
+    configure: []
+    build: []
+    source:
+      subdir: meta-sources
+      version: '1.0'
+    pkgs_required:
+      - base
+      - bash

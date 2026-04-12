@@ -10,6 +10,9 @@ imports:
   - file: tasks/qemu.yml
   - file: pkgs/dev-libs.yml
   - file: pkgs/yak-system.yml
+  - file: pkgs/yak-base.yml
+  - file: pkgs/meta-pkgs.yml
+  - file: pkgs/sys-libs.yml
 
 general:
   patch_author: Yak

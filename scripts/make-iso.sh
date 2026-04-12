@@ -27,7 +27,7 @@ mkdir -p "${ISO_ROOT}/EFI/BOOT/"
 
 cp -v "${YAK_DIR}/yak" "${ISO_ROOT}/boot/yak"
 cp -v "${YAK_DIR}/yak.sym" "${ISO_ROOT}/boot/yak.sym"
-# TODO: copy initrd
+cp -v "${BUILD_DIR}/initrd.tar" "${ISO_ROOT}/boot/initrd.tar"
 
 cat <<EOF > "${ISO_ROOT}/boot/limine/limine.conf"
 timeout: 3
@@ -36,6 +36,9 @@ timeout: 3
 protocol: limine
 kernel_path: boot():/boot/yak
 module_path: boot():/boot/yak.sym
+module_string: symbols
+module_path: boot():/boot/initrd.tar
+module_string: initrd
 EOF
 
 if [[ $ARCH == "x86_64" ]]; then

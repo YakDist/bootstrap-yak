@@ -1,0 +1,45 @@
+packages:
+  - name: core-files
+    architecture: noarch
+    default: true
+    revision: 1
+    configure: []
+    source:
+      subdir: meta-sources
+      version: '1.0'
+    build:
+      # Create initial directories
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/etc']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/run']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/root']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/dev']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/sys']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/proc']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/tmp']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/home/managarm']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/share']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/var']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/bin']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/lib']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/usr/sbin']
+      - args: ['mkdir', '-p', '@THIS_COLLECT_DIR@/opt']
+      # xbps does not install empty directories, .keep files fixes this
+      - args: ['touch', '@THIS_COLLECT_DIR@/etc/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/run/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/root/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/dev/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/sys/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/proc/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/tmp/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/home/managarm/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/var/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/usr/bin/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/usr/sbin/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/usr/lib/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/usr/share/.keep']
+      - args: ['touch', '@THIS_COLLECT_DIR@/opt/.keep']
+      # Link /bin, /lib and /sbin to their /usr counterparts
+      - args: ['ln', '-svf', 'usr/bin', '@THIS_COLLECT_DIR@/bin']
+      - args: ['ln', '-svf', 'usr/lib', '@THIS_COLLECT_DIR@/lib']
+      - args: ['ln', '-svf', 'usr/sbin', '@THIS_COLLECT_DIR@/sbin']
