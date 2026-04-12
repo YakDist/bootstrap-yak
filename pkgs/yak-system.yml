@@ -1,19 +1,19 @@
 sources:
   - name: yak
     subdir: 'ports'
-    git: 'https://codeberg.org/YakDist/yak.git'
-    branch: main
+    git: 'https://github.com/YakDist/Yak-Kernel.git'
+    branch: master 
     rolling_version: true
     version: "0.0pl@ROLLING_ID@"
   - name: freestnd-c-hdrs
     subdir: 'ports'
-    git: 'https://codeberg.org/OSDev/freestnd-c-hdrs.git'
+    git: 'https://github.com/osdev0/freestnd-c-hdrs.git'
     branch: trunk
     rolling_version: true
     version: "0.0pl@ROLLING_ID@"
   - name: freestnd-cxx-hdrs
     subdir: 'ports'
-    git: 'https://codeberg.org/OSDev/freestnd-cxx-hdrs.git'
+    git: 'https://github.com/osdev0/freestnd-cxx-hdrs.git'
     branch: trunk
     rolling_version: true
     version: "0.0pl@ROLLING_ID@"
