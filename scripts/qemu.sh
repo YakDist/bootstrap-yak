@@ -46,7 +46,7 @@ try_enable_kvm() {
         QEMU_ARGS+=" -accel kvm"
 
         if [[ "$ARCH" == "x86_64" ]]; then
-            QEMU_ARGS+=" -cpu host,+invtsc"
+            QEMU_ARGS+=" -cpu host,+invtsc,+x2apic"
         fi
     fi
 }

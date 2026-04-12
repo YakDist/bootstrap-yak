@@ -35,3 +35,15 @@ tasks:
       - "@BUILD_ROOT@/yak-@OPTION:arch@.iso"
     workdir: "@BUILD_ROOT@"
     containerless: true
+  - name: yak-menuconfig
+    workdir: "@BUILD_ROOT@"
+    pkgs_required:
+      - yak
+    args:
+      - "ninja"
+      - "-C"
+      - "@BUILD_ROOT@/pkg-builds/yak"
+      - "menuconfig"
+    environ:
+      'LC_ALL': 'C.UTF-8'
+      'TERM': 'xterm-256color'
