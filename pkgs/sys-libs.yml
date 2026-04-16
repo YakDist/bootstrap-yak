@@ -135,6 +135,43 @@ packages:
           DESTDIR: '@THIS_COLLECT_DIR@'
         quiet: true
 
+  - name: libxcrypt
+    architecture: "@OPTION:arch@"
+    default: true
+    revision: 1
+    source:
+      name: libxcrypt
+      subdir: 'ports'
+      version: 4.5.2
+      url: 'https://github.com/besser82/libxcrypt/releases/download/v4.5.2/libxcrypt-4.5.2.tar.xz'
+      checksum: 'blake2b:5954d3b77c5cc0f9e75e47a0f6c3dbbb6e09130875e9047b31cc069f835cf379f13995e16184e69d7b75f228e8d29bc98e4dffa77d95d70628f6847d652c07ea'
+      extract_path: libxcrypt-4.5.2
+      format: tar.xz
+      tools_required:
+        - host-autoconf-v2.72
+        - host-automake-v1.16
+        - host-libtool
+      regenerate:
+        - args: ['autoreconf', '-fvi']
+    tools_required:
+      - host-pkg-config
+    pkgs_required:
+      - mlibc
+    configure:
+      - args:
+          - '@THIS_SOURCE_DIR@/configure'
+          - '--prefix=/usr'
+          - '--enable-shared'
+          - '--disable-static'
+          - '--enable-obsolete-api=glibc'
+          - '--disable-xcrypt-compat-files'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', '-j@PARALLELISM@', 'install']
+        environ:
+          DESTDIR: '@THIS_COLLECT_DIR@'
+        quiet: true
+
   - name: libintl
     architecture: "@OPTION:arch@"
     revision: 1

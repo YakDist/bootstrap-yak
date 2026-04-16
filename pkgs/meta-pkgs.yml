@@ -8,10 +8,24 @@ packages:
       subdir: meta-sources
       version: '1.0'
     pkgs_required:
-      - mlibc
       - core-files
-      - tzdata
+      - core-libs
       - yak
+
+  - name: core-libs
+    architecture: noarch
+    revision: 1
+    configure: []
+    build: []
+    source:
+      subdir: meta-sources
+      version: '1.0'
+    pkgs_required:
+      - mlibc
+      - tzdata
+      - libiconv
+      - libintl
+      - libxcrypt
       - libgcc
       - libstdc++
 
