@@ -1,7 +1,7 @@
 packages:
   - name: base
     architecture: noarch
-    revision: 1
+    revision: 2
     configure: []
     build: []
     source:
@@ -12,6 +12,8 @@ packages:
       - core-files
       - tzdata
       - yak
+      - libgcc
+      - libstdc++
 
   - name: minimal
     architecture: noarch

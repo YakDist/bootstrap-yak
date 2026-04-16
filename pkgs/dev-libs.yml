@@ -109,3 +109,38 @@ packages:
       - args: ["ninja", "install"]
         environ:
           DESTDIR: "@THIS_COLLECT_DIR@"
+  - name: libgcc
+    architecture: "@OPTION:arch@"
+    revision: 1
+    from_source: gcc
+    tools_required:
+      - host-gcc
+    configure: []
+    build:
+      - args: |
+          rm -rf @THIS_BUILD_DIR@/tmp_libgcc_dir
+          mkdir @THIS_BUILD_DIR@/tmp_libgcc_dir
+          make -C @BUILD_ROOT@/tool-builds/host-gcc install-target-libgcc DESTDIR=@THIS_BUILD_DIR@/tmp_libgcc_dir
+          mv @THIS_BUILD_DIR@/tmp_libgcc_dir/var/lib/managarm-buildenv/build/tools/host-gcc/* @THIS_BUILD_DIR@/tmp_libgcc_dir/
+          mkdir -p @THIS_COLLECT_DIR@/usr
+          cp -r @THIS_BUILD_DIR@/tmp_libgcc_dir/lib/ @THIS_COLLECT_DIR@/usr/
+          cp -r @THIS_BUILD_DIR@/tmp_libgcc_dir/@OPTION:arch-triple@/* @THIS_COLLECT_DIR@/usr/
+
+  - name: libstdc++
+    architecture: "@OPTION:arch@"
+    revision: 1
+    from_source: gcc
+    tools_required:
+      - host-gcc
+    configure: []
+    build:
+      - args: |
+          rm -rf @THIS_BUILD_DIR@/tmp_libgcc_dir
+          mkdir @THIS_BUILD_DIR@/tmp_libgcc_dir
+          make -C @BUILD_ROOT@/tool-builds/host-gcc install-target-libstdc++-v3 DESTDIR=@THIS_BUILD_DIR@/tmp_libgcc_dir
+          mv @THIS_BUILD_DIR@/tmp_libgcc_dir/var/lib/managarm-buildenv/build/tools/host-gcc/* @THIS_BUILD_DIR@/tmp_libgcc_dir/
+          rm -fv tmp_libgcc_dir/@OPTION:arch-triple@/lib/libgcc*
+          mkdir -p @THIS_COLLECT_DIR@/usr
+          cp -r @THIS_BUILD_DIR@/tmp_libgcc_dir/share @THIS_COLLECT_DIR@/usr/
+          cp -r @THIS_BUILD_DIR@/tmp_libgcc_dir/@OPTION:arch-triple@/* @THIS_COLLECT_DIR@/usr/
+

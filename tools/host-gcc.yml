@@ -104,9 +104,9 @@ tools:
           - args: ["make", "-j@PARALLELISM@", "install-gcc"]
             # GCC does *not* look for target-prefixed LD/AS.
             # Instead, it searches a list of prefix directories. Link AS/LD to make it happy.
-          - args: ["mkdir", "-p", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin"]
-          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:triple@/bin/as", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin/as"]
-          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:triple@/bin/ld", "@PREFIX@/@OPTION:arch@-@OPTION:triple@/bin/ld"]
+          - args: ["mkdir", "-p", "@PREFIX@/@OPTION:arch@-@OPTION:arch-triple@/bin"]
+          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:arch-triple@/bin/as", "@PREFIX@/@OPTION:arch@-@OPTION:arch-triple@/bin/as"]
+          - args: ["ln", "-sf", "../../../host-binutils/@OPTION:arch@-@OPTION:arch-triple@/bin/ld", "@PREFIX@/@OPTION:arch@-@OPTION:arch-triple@/bin/ld"]
       - name: libgcc
         tools_required:
           - tool: host-gcc

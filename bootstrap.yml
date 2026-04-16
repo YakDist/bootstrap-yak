@@ -7,6 +7,7 @@ imports:
   - file: tools/host-llvm.yml
   - file: tools/host-limine.yml
   - file: tools/host-ovmf.yml
+  - file: tools/host-gettext.yml
   - file: tasks/qemu.yml
   - file: pkgs/dev-libs.yml
   - file: pkgs/yak-system.yml

@@ -73,7 +73,7 @@ packages:
       subdir: .
     tools_required:
       - host-cmake
-      - host-gcc-bootstrap
+      - host-gcc
     pkgs_required:
       - mlibc
     configure:
