@@ -29,6 +29,7 @@ packages:
       - libgcc
       - libstdc++
 
+  # Minimal usable system running
   - name: minimal
     architecture: noarch
     revision: 1
@@ -39,4 +40,5 @@ packages:
       version: '1.0'
     pkgs_required:
       - base
+      - yak-init
       - bash

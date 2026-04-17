@@ -1,18 +1,50 @@
 packages:
   - name: bash
     architecture: '@OPTION:arch@'
+    revision: 1
     source:
       subdir: 'ports'
       git: 'https://https.git.savannah.gnu.org/git/bash.git'
-      # Checkout bash 5.1 patch 16
+      # Checkout bash 5.3 patch 9
       branch: 'master'
-      commit: '9439ce094c9aa7557a9d53ac7b412a23aa66e36b'
-      version: '5.1.16'
+      commit: '637f5c8696a6adc9b4519f1cd74aa78492266b7f'
+      version: '5.3.9'
       tools_required:
         - host-autoconf-v2.69
         - host-automake-v1.15
+      sources_required:
+        - gnuconfig
       regenerate:
-        # While we do not need to regenerate the configure script, we need to touch it
-        # after patching config.sub so that make does not try to regenerate it.
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', 'support/config.sub']
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', 'support/config.guess']
         - args: ['autoconf']
+    tools_required:
+      - host-gcc
+      - host-pkg-config
+    pkgs_required:
+      - mlibc
+      - ncurses
+      - readline
+    configure:
+      - args:
+          - '@THIS_SOURCE_DIR@/configure'
+          - '--host=@OPTION:arch-triple@'
+          - '--prefix=/usr'
+          - '--without-bash-malloc'
+          - '--with-curses'
+          - '--enable-readline'
+          - '--with-installed-readline=/usr/lib'
+        environ:
+          EXTRA_CFLAGS: >
+            -DNON_INTERACTIVE_LOGIN_SHELLS -DSYS_BASHRC='"/etc/bash.bashrc"'
+          bash_cv_getcwd_malloc: 'yes'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', 'install', 'DESTDIR=@THIS_COLLECT_DIR@']
+      - args: |
+          ln -s bash @THIS_COLLECT_DIR@/usr/bin/sh
+          ln -s bash @THIS_COLLECT_DIR@/usr/bin/rbash
+
+          mkdir -p @THIS_COLLECT_DIR@/etc
+          cp -v @SOURCE_ROOT@/support/bash/bash.bashrc @THIS_COLLECT_DIR@/etc
 

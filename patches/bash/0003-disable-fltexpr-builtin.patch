@@ -1,0 +1,60 @@
+From 51ed2d62e152c3c60c6e92d50f861963e275185d Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vincent.schweiger@icloud.com>
+Date: Fri, 17 Apr 2026 20:29:51 +0200
+Subject: [PATCH 3/3] disable fltexpr builtin
+
+---
+ examples/loadables/Makefile.in | 6 +-----
+ examples/loadables/fltexpr.c   | 9 +--------
+ 2 files changed, 2 insertions(+), 13 deletions(-)
+
+diff --git a/examples/loadables/Makefile.in b/examples/loadables/Makefile.in
+index 19976b5..171a8b0 100644
+--- a/examples/loadables/Makefile.in
++++ b/examples/loadables/Makefile.in
+@@ -103,7 +103,7 @@ INC = -I. -I.. -I$(topdir) -I$(topdir)/lib -I$(topdir)/builtins -I${srcdir} \
+ ALLPROG = print truefalse sleep finfo logname basename dirname fdflags \
+ 	  tty pathchk tee head mkdir rmdir mkfifo mktemp printenv id whoami \
+ 	  uname sync push ln unlink realpath strftime mypid setpgid seq rm \
+-	  accept csv dsv cut stat getconf kv strptime chmod fltexpr
++	  accept csv dsv cut stat getconf kv strptime chmod
+ OTHERPROG = necho hello cat pushd asort
+ 
+ SUBDIRS = perl
+@@ -253,10 +253,6 @@ stat:	stat.o
+ asort:	asort.o
+ 	$(SHOBJ_LD) $(SHOBJ_LDFLAGS) $(SHOBJ_XLDFLAGS) -o $@ asort.o $(SHOBJ_LIBS)
+ 
+-fltexpr:	fltexpr.o
+-	$(SHOBJ_LD) $(SHOBJ_LDFLAGS) $(SHOBJ_XLDFLAGS) -o $@ fltexpr.o $(SHOBJ_LIBS) -lm
+-
+-
+ # pushd is a special case.  We use the same source that the builtin version
+ # uses, with special compilation options.
+ #
+diff --git a/examples/loadables/fltexpr.c b/examples/loadables/fltexpr.c
+index 7f775f2..7e96071 100644
+--- a/examples/loadables/fltexpr.c
++++ b/examples/loadables/fltexpr.c
+@@ -61,17 +61,10 @@
+  chet.ramey@case.edu
+ */
+ 
+-#include "config.h"
+-
+ #include <stdio.h>
+ #include "bashansi.h"
+ 
+-#if defined (HAVE_UNISTD_H)
+-#  ifdef _MINIX
+-#    include <sys/types.h>
+-#  endif
+-#  include <unistd.h>
+-#endif
++#include <unistd.h>
+ 
+ #include <errno.h>
+ #include <float.h>
+-- 
+2.53.0
+

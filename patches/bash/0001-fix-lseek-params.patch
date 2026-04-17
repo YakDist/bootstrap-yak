@@ -1,0 +1,48 @@
+From 633775e86f5255e1409c394cfb860a5b8d0b74e5 Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vincent.schweiger@icloud.com>
+Date: Fri, 17 Apr 2026 20:03:57 +0200
+Subject: [PATCH 1/3] fix lseek params
+
+---
+ lib/termcap/termcap.c | 2 +-
+ shell.c               | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/termcap/termcap.c b/lib/termcap/termcap.c
+index 2b47062..a18af16 100644
+--- a/lib/termcap/termcap.c
++++ b/lib/termcap/termcap.c
+@@ -611,7 +611,7 @@ scan_file (char *str, int fd, struct buffer *bufp)
+   bufp->ateof = 0;
+   *bufp->ptr = '\0';
+ 
+-  lseek (fd, 0L, 0);
++  lseek (fd, 0L, SEEK_SET);
+ 
+   while (!bufp->ateof)
+     {
+diff --git a/shell.c b/shell.c
+index e59029c..653cca1 100644
+--- a/shell.c
++++ b/shell.c
+@@ -1654,7 +1654,7 @@ open_shell_script (char *script_name)
+ #endif
+ 
+   /* Only do this with non-tty file descriptors we can seek on. */
+-  if (fd_is_tty == 0 && (lseek (fd, 0L, 1) != -1))
++  if (fd_is_tty == 0 && (lseek (fd, 0L, SEEK_CUR) != -1))
+     {
+       /* Check to see if the `file' in `bash file' is a binary file
+ 	 according to the same tests done by execute_simple_command (),
+@@ -1691,7 +1691,7 @@ open_shell_script (char *script_name)
+ 	  exit (EX_BINARY_FILE);
+ 	}
+       /* Now rewind the file back to the beginning. */
+-      lseek (fd, 0L, 0);
++      lseek (fd, 0L, SEEK_SET);
+     }
+ 
+   /* Open the script.  But try to move the file descriptor to a randomly
+-- 
+2.53.0
+
