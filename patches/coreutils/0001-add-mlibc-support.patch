@@ -1,0 +1,12 @@
+diff -Naru coreutils/lib/getlocalename_l-unsafe.c coreutils-merged/lib/getlocalename_l-unsafe.c
+--- coreutils/lib/getlocalename_l-unsafe.c	2026-01-11 13:47:16.000000000 +0100
++++ coreutils-merged/lib/getlocalename_l-unsafe.c	2026-04-18 01:26:51.751820032 +0200
+@@ -658,6 +658,8 @@
+       };
+       const char *name = ((struct __locale_t *) locale)->mb_cur_max == 4 ? "C.UTF-8" : "C";
+       return (struct string_with_storage) { name, STORAGE_INDEFINITE };
++#elif defined __mlibc__
++      return (struct string_with_storage) { "C", STORAGE_INDEFINITE };
+ #else
+  #error "Please port gnulib getlocalename_l-unsafe.c to your platform! Report this to bug-gnulib."
+ #endif

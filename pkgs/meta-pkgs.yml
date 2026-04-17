@@ -32,7 +32,7 @@ packages:
   # Minimal usable system running
   - name: minimal
     architecture: noarch
-    revision: 1
+    revision: 2
     configure: []
     build: []
     source:
@@ -42,3 +42,4 @@ packages:
       - base
       - yak-init
       - bash
+      - coreutils

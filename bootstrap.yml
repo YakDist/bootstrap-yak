@@ -15,6 +15,7 @@ imports:
   - file: pkgs/yak-base.yml
   - file: pkgs/meta-pkgs.yml
   - file: pkgs/sys-libs.yml
+  - file: pkgs/sys-apps.yml
 
 general:
   patch_author: Yak

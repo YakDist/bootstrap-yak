@@ -1,0 +1,45 @@
+packages:
+  - name: coreutils
+    revision: 1
+    architecture: '@OPTION:arch@'
+    source:
+      name: coreutils
+      subdir: 'ports'
+      url: 'https://ftp.gnu.org/gnu/coreutils/coreutils-9.10.tar.xz'
+      format: 'tar.xz'
+      version: '9.10'
+      checksum: 'blake2b:7f9f93afc996dea7b6ab412703b1706f40616ae4fee1eea9e5cad0f1e8e95b03df9570084a2703fa4b5bb1cb2eaf8bbe55368c0c7ff58af985b30d09227f9309'
+      extract_path: 'coreutils-9.10'
+      patch_path_strip: 1
+      sources_required:
+        - gnulib
+        - gnuconfig
+      regenerate:
+        - args: ['python3', '@SOURCE_ROOT@/scripts/checkout-gnulib.py', '@SOURCE_ROOT@/ports/gnulib']
+        - args: ['cp', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', '@THIS_SOURCE_DIR@/build-aux/']
+        - args: ['cp', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', '@THIS_SOURCE_DIR@/build-aux/']
+    tools_required:
+      - host-gcc
+    pkgs_required:
+      - mlibc
+    configure:
+      # From managarm
+      - args: ['@THIS_SOURCE_DIR@/configure']
+      - args: ['make', 'src/make-prime-list']
+      - args: |
+          ./src/make-prime-list 5000 > @THIS_SOURCE_DIR@/src/primes.h
+      - args: ['make', 'clean']
+      - args:
+          - '@THIS_SOURCE_DIR@/configure'
+          - '--host=@OPTION:arch-triple@'
+          - '--prefix=/usr'
+          - '--enable-no-install-programm=kill,uptime,runcon'
+          - '--enable-cross-guesses=risky'
+          - '--with-included-regex'
+          - 'CFLAGS=-Wno-error'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', 'install']
+        environ:
+          DESTDIR: '@THIS_COLLECT_DIR@'
+        quiet: true

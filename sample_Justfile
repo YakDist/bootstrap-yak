@@ -4,11 +4,23 @@ build:
 menuconfig:
 	xbstrap run yak-menuconfig
 
+initrd:
+	xbstrap run update-initrd
+
+iso:
+	xbstrap run make-iso
+
 run-numa:
-	QEMU_NUMA=2 QEMU_CORES=4 QEMU_MEM=2048M xbstrap run make-iso qemu
+	QEMU_NUMA=2 QEMU_CORES=4 QEMU_MEM=2048M xbstrap run qemu
 
 run:
-	QEMU_CORES=4 QEMU_MEM=512M xbstrap run make-iso qemu
+	QEMU_CORES=4 QEMU_MEM=1024M xbstrap run qemu
+
+run-default:
+	xbstrap run qemu 
+
+run-gdb:
+	xbstrap run qemu-gdb
 
 addr2line ADDR:
 	addr2line -e pkg-builds/yak/kernel/yak.debug  {{ADDR}}
