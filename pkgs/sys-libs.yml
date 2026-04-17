@@ -162,6 +162,7 @@ packages:
     configure:
       - args:
           - '@THIS_SOURCE_DIR@/configure'
+          - "--host=@OPTION:arch-triple@"
           - '--prefix=/usr'
           - '--enable-shared'
           - '--disable-static'
@@ -214,6 +215,45 @@ packages:
           DESTDIR: '@THIS_COLLECT_DIR@'
         quiet: true
 
+  - name: readline
+    architecture: "@OPTION:arch@"
+    revision: 2
+    source:
+      name: 'readline'
+      subdir: 'ports'
+      git: https://git.savannah.gnu.org/git/readline.git
+      branch: 'master'
+      commit: '553d6bb272f26400d6d4d1cac7c1df84c447449b'
+      version: '8.3.3'
+      sources_required:
+        - gnuconfig
+      regenerate:
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', 'support/config.sub']
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', 'support/config.guess']
+    tools_required:
+      - host-gcc
+      - host-pkg-config
+    pkgs_required:
+      - mlibc
+      - ncurses
+    configure:
+      - args:
+          - "@THIS_SOURCE_DIR@/configure"
+          - '--host=@OPTION:arch-triple@'
+          - '--prefix=/usr'
+          - '--enable-multibyte'
+          - '--disable-static'
+          - '--with-curses'
+          - '--with-shared-termcap-library'
+        environ:
+          bash_cv_termcap_lib: 'libncursesw'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', 'install', 'DESTDIR=@THIS_COLLECT_DIR@']
+      - args: ['rm', '-rf', '@THIS_COLLECT_DIR@/usr/share/{readline,doc}']
+      - args: ['ln', '-svf', 'libreadline.so.8', '@THIS_COLLECT_DIR@/usr/lib/libreadline.so']
+      - args: ['ln', '-svf', 'libhistory.so.8', '@THIS_COLLECT_DIR@/usr/lib/libhistory.so']
+
   - name: ncurses
     architecture: "@OPTION:arch@"
     revision: 1
@@ -225,6 +265,7 @@ packages:
       extract_path: 'ncurses-6.6'
       checksum: 'blake2b:8863ce3091fc72f23d12fe5913ea07c783e907cd8454b1c2b782f3e6bb91110cbfc4c52b8f0404eabd0d2041211183614e9d7f125ef8deeb23237b031f61fca0'
       version: '6.6'
+      patch_path_strip: 1
       sources_required:
         - gnuconfig
       regenerate:
@@ -237,18 +278,17 @@ packages:
     configure:
       - args:
           - "@THIS_SOURCE_DIR@/configure"
+          - '--host=@OPTION:arch-triple@'
           - '--prefix=/usr'
-          - '--enable-widec'
+          - '--without-ada'
           - '--enable-pc-files'
           - '--with-shared'
-          - '--with-cxx-shared'
-          - '--with-cxx-binding'
           - '--without-normal'
-          - '--without-debug'
           - '--with-manpage-format=normal'
           - '--with-pkg-config-libdir=/usr/lib/pkgconfig'
+          - '--enable-widec'
+          - '--without-debug'
           - '--with-termlib'
-          - '--without-ada'
         environ:
           cf_cv_func_nanosleep: 'yes'
     build:
@@ -258,13 +298,12 @@ packages:
           DESTDIR: '@THIS_COLLECT_DIR@'
       - args: |
           for lib in ncurses ncurses++ form panel menu tinfo; do
-            rm -vf "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}.so
-            echo "INPUT(-l${lib}w)" > "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}.so
-            ln -sfv ${lib}w.pc "@THIS_COLLECT_DIR@/usr"/lib/pkgconfig/${lib}.pc
+            rm -vf @THIS_COLLECT_DIR@/usr/lib/lib${lib}.so
+            echo "INPUT(-l${lib}w)" > @THIS_COLLECT_DIR@/usr/lib/lib${lib}.so
+            ln -sfv ${lib}w.pc @THIS_COLLECT_DIR@/usr/lib/pkgconfig/${lib}.pc
             # Set library soname
-            patchelf --set-soname lib${lib}w.so "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}w.so
+            patchelf --set-soname lib${lib}w.so @THIS_COLLECT_DIR@/usr/lib/lib${lib}w.so
           done
-          rm -vf "@THIS_COLLECT_DIR@/usr"/lib/libcursesw.so
-          echo "INPUT(-lncursesw)" > "@THIS_COLLECT_DIR@/usr"/lib/libcursesw.so
-          ln -sfv libncurses.so "@THIS_COLLECT_DIR@/usr"/lib/libcurses.so
-      - args: ['rm', '-f', '@THIS_COLLECT_DIR@/usr/lib/*.a']
+          rm -vf @THIS_COLLECT_DIR@/usr/lib/libcursesw.so
+          echo "INPUT(-lncursesw)" > @THIS_COLLECT_DIR@/usr/lib/libcursesw.so
+          ln -sfv libncurses.so @THIS_COLLECT_DIR@/usr/lib/libcurses.so

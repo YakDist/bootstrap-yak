@@ -10,6 +10,7 @@ imports:
   - file: tools/host-gettext.yml
   - file: tasks/qemu.yml
   - file: pkgs/dev-libs.yml
+  - file: pkgs/app-shells.yml
   - file: pkgs/yak-system.yml
   - file: pkgs/yak-base.yml
   - file: pkgs/meta-pkgs.yml

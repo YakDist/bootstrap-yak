@@ -1,0 +1,30 @@
+diff '--color=auto' -Naru ncurses/configure ncurses-merged/configure
+--- ncurses/configure	2025-12-27 01:59:17.000000000 +0100
++++ ncurses-merged/configure	2026-04-17 19:44:09.865953552 +0200
+@@ -7123,7 +7123,7 @@
+ 		fi
+ 		cf_cv_rm_so_locs=yes
+ 		;;
+-	(linux*|gnu*|k*bsd*-gnu)
++	(linux*|gnu*|k*bsd*-gnu|*mlibc)
+ 		if test "$DFT_LWR_MODEL" = "shared" && test -n "$LD_RPATH_OPT" ; then
+ 			LOCAL_LDFLAGS="${LD_RPATH_OPT}\$(LOCAL_LIBDIR)"
+ 			LOCAL_LDFLAGS2="$LOCAL_LDFLAGS"
+@@ -10785,7 +10785,7 @@
+ 	cf_xopen_source="-D_SGI_SOURCE"
+ 	cf_XOPEN_SOURCE=
+ 	;;
+-(linux*gnu*|uclinux*|gnu*|mint*|k*bsd*-gnu|cygwin|msys|mingw*|linux*uclibc)
++(linux*gnu*|uclinux*|gnu*|mint*|k*bsd*-gnu|cygwin|msys|mingw*|linux*uclibc|*mlibc)
+ 
+ cf_gnu_xopen_source=$cf_XOPEN_SOURCE
+ 
+@@ -10807,6 +10807,8 @@
+ 		return 0;
+ 	#elif __NEWLIB__ > 0 && __NEWLIB_MINOR__ >= 0
+ 		return 0;
++	#elif __mlibc__ > 0
++		return 0;
+ 	#else
+ 	#	error not GNU C library
+ 	#endif
