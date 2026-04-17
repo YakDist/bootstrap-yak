@@ -81,7 +81,6 @@ tools:
     tools_required:
       - tool: cross-binutils
         recursive: true
-      - host-gcc-bootstrap
     configure:
       - args:
           - "@THIS_SOURCE_DIR@/configure"
@@ -94,14 +93,17 @@ tools:
           - "--enable-threads=posix"
           - "--enable-shared"
           - "--enable-host-shared"
+          - 'CXFLAGS=-O2'
+          - 'CXXFLAGS=-O2'
     stages:
       - name: compiler
-        tools_required:
-          - host-gcc-bootstrap
+        pkgs_required:
+          - mlibc-headers
         compile:
+          - args: ['mkdir', '-p', '@SYSROOT_DIR@/usr/include']
           - args: ["make", "-j@PARALLELISM@", "all-gcc"]
         install:
-          - args: ["make", "-j@PARALLELISM@", "install-gcc"]
+          - args: ["make", "install-gcc"]
             # GCC does *not* look for target-prefixed LD/AS.
             # Instead, it searches a list of prefix directories. Link AS/LD to make it happy.
           - args: ["mkdir", "-p", "@PREFIX@/@OPTION:arch@-@OPTION:arch-triple@/bin"]
@@ -116,14 +118,12 @@ tools:
         compile:
           - args: ["make", "-j@PARALLELISM@", "all-target-libgcc"]
         install:
-          - args: ["make", "-j@PARALLELISM@", "install-target-libgcc"]
+          - args: ["make", "install-target-libgcc"]
       - name: libstdc++
         tools_required:
           - tool: host-gcc
-            stage_dependencies: [compiler, libgcc]
-        pkgs_required:
-          - mlibc
+            stage_dependencies: [libgcc]
         compile:
           - args: ["make", "-j@PARALLELISM@", "all-target-libstdc++-v3"]
         install:
-          - args: ["make", "-j@PARALLELISM@", "install-target-libstdc++-v3"]
+          - args: ["make", "install-target-libstdc++-v3"]

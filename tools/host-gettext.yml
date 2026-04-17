@@ -1,4 +1,10 @@
 sources:
+  - name: treesitter
+    subdir: 'ports'
+    git: https://github.com/tree-sitter/tree-sitter
+    tag: v0.26.8
+    version: 0.26.8
+
   - name: bison
     subdir: 'ports'
     git: 'https://https.git.savannah.gnu.org/git/bison.git'
@@ -37,17 +43,39 @@ tools:
     install:
       - args: ['make', 'install']
 
+  - name: host-treesitter
+    architecture: "@OPTION:arch@"
+    from_source: treesitter
+    revision: 1
+    configure:
+      - args:
+          - 'cmake'
+          - '-GNinja'
+          - '-DCMAKE_INSTALL_PREFIX=@PREFIX@'
+          - '-DCMAKE_C_COMPILER=gcc'
+          - '-DCMAKE_CXX_COMPILER=g++'
+          - '-DCMAKE_BUILD_TYPE=Release'
+          - '-DDEFAULT_SYSROOT=@SYSROOT_DIR@'
+          - '-DENABLE_LINKER_BUILD_ID=ON'
+          - '@THIS_SOURCE_DIR@'
+    compile:
+      - args: ['ninja', '-j@PARALLELISM@']
+    install:
+      - args: ['ninja', 'install']
+
   - name: host-gettext
     architecture: noarch
     from_source: gettext
     exports_aclocal: true
     tools_required:
       - host-bison
-      - host-autoconf-v2.69
-      - host-automake-v1.15
+      - host-autoconf-v2.72
+      - host-automake-v1.16
     configure:
-      - args: ['@THIS_SOURCE_DIR@/configure', '--prefix=@PREFIX@']
+      - args:
+          - '@THIS_SOURCE_DIR@/configure'
+          - '--prefix=@PREFIX@'
     compile:
-      - args: ['make']
+      - args: ['make', '-j@PARALLELISM@']
     install:
       - args: ['make', 'install']

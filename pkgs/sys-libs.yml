@@ -9,8 +9,11 @@ sources:
       - host-automake-v1.16
       - host-libtool
     regenerate:
+      - args: ['./autopull.sh']
+        isolate_network: false
       - args: ['python3', '@SOURCE_ROOT@/scripts/checkout-gnulib.py', "@SOURCE_ROOT@/ports/gnulib"]
       - args: ['autoreconf', '-fvi']
+      #- args: ['./autogen.sh']
 
 packages:
   - name: tzdata
@@ -83,7 +86,6 @@ packages:
         - host-libtool
         - host-pkg-config
         - host-autoconf-archive
-        - host-gettext
       regenerate:
         - args: ['python3', '@SOURCE_ROOT@/scripts/checkout-gnulib.py', '@SOURCE_ROOT@/ports/gnulib']
         - args: ['./autogen.sh']
@@ -211,3 +213,58 @@ packages:
         environ:
           DESTDIR: '@THIS_COLLECT_DIR@'
         quiet: true
+
+  - name: ncurses
+    architecture: "@OPTION:arch@"
+    revision: 1
+    source:
+      name: 'ncurses'
+      subdir: 'ports'
+      url: 'https://ftpmirror.gnu.org/gnu/ncurses/ncurses-6.6.tar.gz'
+      format: tar.gz
+      extract_path: 'ncurses-6.6'
+      checksum: 'blake2b:8863ce3091fc72f23d12fe5913ea07c783e907cd8454b1c2b782f3e6bb91110cbfc4c52b8f0404eabd0d2041211183614e9d7f125ef8deeb23237b031f61fca0'
+      version: '6.6'
+      sources_required:
+        - gnuconfig
+      regenerate:
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', 'config.sub']
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', 'config.guess']
+    tools_required:
+      - host-gcc
+    pkgs_required:
+      - core-libs
+    configure:
+      - args:
+          - "@THIS_SOURCE_DIR@/configure"
+          - '--prefix=/usr'
+          - '--enable-widec'
+          - '--enable-pc-files'
+          - '--with-shared'
+          - '--with-cxx-shared'
+          - '--with-cxx-binding'
+          - '--without-normal'
+          - '--without-debug'
+          - '--with-manpage-format=normal'
+          - '--with-pkg-config-libdir=/usr/lib/pkgconfig'
+          - '--with-termlib'
+          - '--without-ada'
+        environ:
+          cf_cv_func_nanosleep: 'yes'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', 'install']
+        environ:
+          DESTDIR: '@THIS_COLLECT_DIR@'
+      - args: |
+          for lib in ncurses ncurses++ form panel menu tinfo; do
+            rm -vf "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}.so
+            echo "INPUT(-l${lib}w)" > "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}.so
+            ln -sfv ${lib}w.pc "@THIS_COLLECT_DIR@/usr"/lib/pkgconfig/${lib}.pc
+            # Set library soname
+            patchelf --set-soname lib${lib}w.so "@THIS_COLLECT_DIR@/usr"/lib/lib${lib}w.so
+          done
+          rm -vf "@THIS_COLLECT_DIR@/usr"/lib/libcursesw.so
+          echo "INPUT(-lncursesw)" > "@THIS_COLLECT_DIR@/usr"/lib/libcursesw.so
+          ln -sfv libncurses.so "@THIS_COLLECT_DIR@/usr"/lib/libcurses.so
+      - args: ['rm', '-f', '@THIS_COLLECT_DIR@/usr/lib/*.a']
