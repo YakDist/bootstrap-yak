@@ -1,0 +1,25 @@
+From 83cf39f6488f4c41478b9f0e78211da98bf4488e Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vincent.schweiger@icloud.com>
+Date: Fri, 17 Apr 2026 18:39:54 +0200
+Subject: [PATCH] fix autopull.sh
+
+---
+ autopull.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/autopull.sh b/autopull.sh
+index e32e4b4..e446fad 100755
+--- a/autopull.sh
++++ b/autopull.sh
+@@ -26,7 +26,7 @@
+ # Nuisances.
+ (unset CDPATH) >/dev/null 2>&1 && unset CDPATH
+ 
+-./gitsub.sh pull || exit 1
++#./gitsub.sh pull || exit 1
+ 
+ # func_git_clone_shallow SUBDIR URL REVISION
+ func_git_clone_shallow ()
+-- 
+2.53.0
+
