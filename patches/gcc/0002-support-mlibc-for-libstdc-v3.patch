@@ -1,0 +1,34 @@
+From 6442d035bfaae7d0799fc928029d53dbab39ba10 Mon Sep 17 00:00:00 2001
+From: Vincent Schweiger <vincent.schweiger@icloud.com>
+Date: Thu, 16 Apr 2026 22:19:10 +0200
+Subject: support mlibc for libstdc++-v3
+
+---
+ libstdc++-v3/crossconfig.m4 | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/libstdc++-v3/crossconfig.m4 b/libstdc++-v3/crossconfig.m4
+index b3269cb88..e6bc6dd50 100644
+--- a/libstdc++-v3/crossconfig.m4
++++ b/libstdc++-v3/crossconfig.m4
+@@ -299,6 +299,17 @@ dnl # functions in the list guarded by
+ dnl # long_double_math_on_this_cpu in configure.ac, right after
+ dnl # the expansion of the present macro.
+     ;;
++  *-mlibc*)
++    GLIBCXX_CHECK_COMPILER_FEATURES
++    GLIBCXX_CHECK_LINKER_FEATURES
++    GLIBCXX_CHECK_MATH_SUPPORT
++    GLIBCXX_CHECK_STDLIB_SUPPORT
++    AC_DEFINE([_GLIBCXX_USE_DEV_RANDOM])
++    AC_DEFINE([_GLIBCXX_USE_RANDOM_TR1])
++    GCC_CHECK_TLS
++    AC_CHECK_FUNCS([aligned_alloc posix_memalign memalign _aligned_malloc])
++    AC_CHECK_FUNCS([timespec_get])
++    ;;
+   *)
+     AC_MSG_ERROR([No support for this host/target combination.])
+    ;;
+-- 
+2.53.0
+
