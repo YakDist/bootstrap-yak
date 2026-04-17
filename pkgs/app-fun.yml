@@ -1,0 +1,19 @@
+packages:
+  - name: cbonsai
+    architecture: "@OPTION:arch@"
+    revision: 1
+    source:
+      subdir: 'ports'
+      git: https://gitlab.com/jallbrit/cbonsai
+      tag: v1.4.2
+      version: 1.4.2
+    tools_required:
+      - host-pkg-config
+      - host-gcc
+    pkgs_required:
+      - mlibc
+      - ncurses
+    configure: []
+    build:
+      - args: ['make', '-C', '@THIS_SOURCE_DIR@', 'install', 'CC=@OPTION:arch-triple@-gcc', 'DESTDIR=@THIS_COLLECT_DIR@', 'PREFIX=/usr']
+
