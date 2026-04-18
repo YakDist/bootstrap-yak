@@ -17,6 +17,7 @@ imports:
   - file: pkgs/sys-libs.yml
   - file: pkgs/sys-apps.yml
   - file: pkgs/app-fun.yml
+  - file: pkgs/app-editors.yml
 
 general:
   patch_author: Yak

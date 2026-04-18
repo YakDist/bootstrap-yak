@@ -1,0 +1,35 @@
+packages:
+  - name: nano
+    revision: 1
+    architecture: "@OPTION:arch@"
+    source:
+      name: nano
+      subdir: 'ports'
+      url: 'https://ftpmirror.gnu.org/gnu/nano/nano-9.0.tar.xz'
+      format: 'tar.xz'
+      version: '9.0'
+      extract_path: 'nano-9.0'
+      checksum: 'blake2b:6df92e9f1b0ba8c2ec3dfdd8b4605a34c08f33c747746d8d3b4145894f0cc64b705c59f2b5aee120050eb32292adf78bf267c568a266c17e2f99e48026d38106'
+      sources_required:
+        - gnuconfig
+      regenerate:
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.sub', 'config.sub']
+        - args: ['cp', '-v', '@SOURCE_ROOT@/ports/gnuconfig/config.guess', 'config.guess']
+    pkgs_required:
+      - mlibc
+      - ncurses
+    tools_required:
+      - host-gcc
+      - host-pkg-config
+    configure:
+      - args:
+        - '@THIS_SOURCE_DIR@/configure'
+        - '--host=@OPTION:arch-triple@'
+        - '--prefix=/usr'
+        - '--disable-nls'
+    build:
+      - args: ['make', '-j@PARALLELISM@']
+      - args: ['make', 'install']
+        environ:
+          DESTDIR: '@THIS_COLLECT_DIR@'
+        quiet: true
