@@ -217,7 +217,7 @@ packages:
 
   - name: readline
     architecture: "@OPTION:arch@"
-    revision: 2
+    revision: 3
     source:
       name: 'readline'
       subdir: 'ports'
@@ -251,6 +251,9 @@ packages:
       - args: ['make', '-j@PARALLELISM@']
       - args: ['make', 'install', 'DESTDIR=@THIS_COLLECT_DIR@']
       - args: ['rm', '-rf', '@THIS_COLLECT_DIR@/usr/share/{readline,doc}']
+      - args: |
+          mkdir -p @THIS_COLLECT_DIR@/etc
+          cp -v @SOURCE_ROOT@/support/readline/inputrc @THIS_COLLECT_DIR@/etc/inputrc
       - args: ['ln', '-svf', 'libreadline.so.8', '@THIS_COLLECT_DIR@/usr/lib/libreadline.so']
       - args: ['ln', '-svf', 'libhistory.so.8', '@THIS_COLLECT_DIR@/usr/lib/libhistory.so']
 
