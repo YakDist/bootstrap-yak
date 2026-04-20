@@ -2,9 +2,12 @@ sources:
   - name: yak
     subdir: 'ports'
     git: 'https://github.com/YakDist/Yak-Kernel.git'
-    branch: master 
+    branch: yak-cpp
     rolling_version: true
     version: "0.0pl@ROLLING_ID@"
+    regenerate:
+      - args: ['git', 'submodule', 'update', '--init']
+        isolate_network: false
   - name: freestnd-c-hdrs
     subdir: 'ports'
     git: 'https://github.com/osdev0/freestnd-c-hdrs.git'
