@@ -33,6 +33,14 @@ Options:
   -G    Disable graphics (nographic)
   -D    Enable QEMU debug logging
   -V    Print QEMU command without running
+
+Environment variables:
+    PRINT_COMMAND: Print out QEMU command instead of executing
+    QEMU_MEM: Set usable memory
+    QEMU_CORES: Set CPU cores
+    QEMU_NUMA: Set NUMA nodes (For testing purposes)
+    QEMU_NO_KVM: If set to 1, overrides all KVM settings
+    QEMU_NO_UEFI: Disable UEFI (only makes sense on x86)
 EOF
 exit 1
 }
