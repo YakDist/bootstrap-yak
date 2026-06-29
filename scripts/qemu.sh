@@ -64,7 +64,7 @@ setup_arch() {
         x86_64)
             QEMU_CMD="qemu-system-x86_64"
             QEMU_ARGS+=" -M q35"
-            QEMU_ARGS+=" -vga virtio"
+            QEMU_ARGS+=" -device virtio-gpu-pci -display gtk,gl=on"
             QEMU_ARGS+=" -rtc base=utc"
 
             if [[ "$DEBUG" -eq 1 ]]; then
