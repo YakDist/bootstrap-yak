@@ -26,11 +26,11 @@ general:
   mandate_hashes_for_archives: true
   enable_network_isolation: true
 
-repositories:
-  tool_archives:
-    x86_64: 'http://build.yak-os.org/repos/tools/x86_64/latest/'
-  xbps:
-    x86_64: 'http://build.yak-os.org/repos/packages/x86_64/latest/'
+#repositories:
+#  tool_archives:
+#    x86_64: 'http://build.yak-os.org/repos/tools/x86_64/latest/'
+#  xbps:
+#    x86_64: 'http://build.yak-os.org/repos/packages/x86_64/latest/'
 
 declare_options:
 - name: arch

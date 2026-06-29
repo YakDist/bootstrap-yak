@@ -71,6 +71,14 @@ setup_arch() {
                 QEMU_ARGS+=" -M smm=off"
             fi
             ;;
+        riscv64)
+            QEMU_CMD="qemu-system-riscv64"
+            # Target QEMU virt board
+            QEMU_ARGS+=" -cpu rv64"
+            QEMU_ARGS+=" -M virt"
+            QEMU_ARGS+=" -device virtio-gpu-pci"
+            QEMU_ARGS+=" -rtc base=utc"
+            ;;
         *)
             echo "Unsupported architecture: $ARCH"
             exit 1

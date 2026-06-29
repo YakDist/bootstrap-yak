@@ -14,7 +14,10 @@ run-numa:
 	QEMU_NUMA=2 QEMU_CORES=4 QEMU_MEM=2048M xbstrap run qemu
 
 run:
-	QEMU_CORES=4 QEMU_MEM=1024M xbstrap run qemu
+	QEMU_CORES=$(nproc) QEMU_MEM=2048M xbstrap run qemu
+
+run-bios:
+	QEMU_NO_UEFI=1 xbstrap run qemu
 
 run-default:
 	xbstrap run qemu 
