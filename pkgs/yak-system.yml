@@ -8,41 +8,8 @@ sources:
     regenerate:
       - args: ['git', 'submodule', 'update', '--init']
         isolate_network: false
-  - name: freestnd-c-hdrs
-    subdir: 'ports'
-    git: 'https://github.com/osdev0/freestnd-c-hdrs.git'
-    branch: trunk
-    commit: '5e11c3da645d8f203e93dc23703b14a15c5b7afc'
-    rolling_version: true
-    version: "0.0pl@ROLLING_ID@"
-  - name: freestnd-cxx-hdrs
-    subdir: 'ports'
-    git: 'https://github.com/osdev0/freestnd-cxx-hdrs.git'
-    branch: trunk
-    rolling_version: true
-    version: "0.0pl@ROLLING_ID@"
-    commit: '9d6a92ab19a57140f1e3ecc6668014d7f46094b6'
 
 packages:
-  - name: freestnd-c-hdrs
-    architecture: "@OPTION:arch@"
-    from_source: freestnd-c-hdrs
-    revision: 1
-    build:
-      - args: ["make", "-C", "@THIS_SOURCE_DIR@", "install"]
-        environ:
-          DESTDIR: "@THIS_COLLECT_DIR@"
-      - args: ['ln', '-srf', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-c-hdrs-@OPTION:arch@.pc', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-c-hdrs.pc']
-  - name: freestnd-cxx-hdrs
-    architecture: "noarch"
-    from_source: freestnd-cxx-hdrs
-    revision: 1
-    build:
-      - args: ["make", "-C", "@THIS_SOURCE_DIR@", "install"]
-        environ:
-          DESTDIR: "@THIS_COLLECT_DIR@"
-      - args: ['ln', '-srf', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-cxx-hdrs-@OPTION:arch@.pc', '@THIS_COLLECT_DIR@/usr/lib/pkgconfig/freestnd-cxx-hdrs.pc']
-
   - name: yak
     architecture: "@OPTION:arch@"
     from_source: yak
@@ -51,10 +18,6 @@ packages:
       - host-llvm
       - host-pkgconf
       - host-cmake
-    pkgs_required:
-      - freestnd-c-hdrs
-      - freestnd-cxx-hdrs
-      - frigg
     configure:
       - args:
           - 'cmake'
